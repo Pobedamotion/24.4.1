@@ -1,2 +1,2 @@
-valid_email = 'pobedamotion@gmail.com'
-valid_password = '48548hdkdfg3FFG'
+valid_email = 'your_email@mail.com'
+valid_password = 'your_password'
