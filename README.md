@@ -1,38 +1,27 @@
-# 24.7.2 PetFriends API Tests
+# PetFriends API Tests
 
 ## Task
-API tests for PetFriends website using requests library.
-Found and implemented 2 missing API methods.
-Written 15 tests total (positive and negative).
+API tests for PetFriends website using requests + parametrize.
+Found 6 bugs in the system through negative and parametrized testing.
 
-## New methods added to api.py
-- add_new_pet_without_photo — adds pet without photo
-- add_photo_of_pet — adds photo to existing pet
+## Tests - 21 total
 
-## All 15 Tests
+Parametrized tests:
+- test_get_all_pets_with_valid_key[empty string, only my pets] ✅
+- test_get_all_pets_with_negative_filter[255, 1000, russian, specials, digit] ✅
 
-Positive tests:
-- test_get_api_key_for_valid_user ✅
-- test_get_all_pets_with_valid_key ✅
-- test_add_new_pet_with_valid_data ✅
-- test_delete_pet ✅
-- test_update_pet_info ✅
-- test_add_pet_without_photo ✅
-- test_add_photo_to_pet ✅
-- test_get_only_my_pets ✅
+Plus 15 individual tests (positive/negative/destructive)
 
-Negative tests (bugs found):
-- test_get_api_key_with_wrong_password ✅
-- test_get_api_key_with_wrong_email ✅
-- test_get_pets_with_wrong_key ✅
-- test_add_pet_with_empty_name ✅ (bug: returns 200)
-- test_add_pet_with_empty_age ✅ (bug: returns 200)
-- test_add_pet_with_long_name ✅ (bug: returns 200)
-- test_delete_not_existing_pet ✅ (bug: returns 200)
+## Bugs found
+- Empty name accepted (should reject)
+- Empty age accepted (should reject)
+- Very long name accepted (should reject)
+- Deleting non-existing pet returns 200 (should be 404)
+- Invalid filter values cause 500 error (should be 400)
 
 ## How to run
 pip install requests pytest
-pytest tests/test_pet_friends.py
+pytest tests/test_pet_friends.py -v
 
 ## Results
-15 passed in 27.69s ✅
+21 passed in 39.97s ✅
