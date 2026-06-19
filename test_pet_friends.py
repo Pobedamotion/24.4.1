@@ -1,3 +1,12 @@
+def generate_string(num):
+    return "x" * num
+
+def russian_chars():
+    return 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
+
+def special_chars():
+    return '|\\/!@#$%^&*()-_=+`~?"№;:[]{}'
+
 import pytest
 from petfriends.api import PetFriends
 from petfriends.settings import valid_email, valid_password
@@ -12,12 +21,27 @@ def test_get_api_key_for_valid_user():
     assert 'key' in result
 
 
-def test_get_all_pets_with_valid_key():
-    """Тест получения списка питомцев с валидным ключом"""
+@pytest.mark.parametrize("filter", ['', 'my_pets'],
+                         ids=['empty string', 'only my pets'])
+def test_get_all_pets_with_valid_key(filter):
+    """Параметризованный тест получения списка питомцев"""
     _, auth_key = pf.get_api_key(valid_email, valid_password)
-    status, result = pf.get_list_of_pets(auth_key, 'my_pets')
+    status, result = pf.get_list_of_pets(auth_key, filter)
     assert status == 200
     assert len(result['pets']) > 0
+
+@pytest.mark.parametrize("filter", [
+    generate_string(255),
+    generate_string(1001),
+    russian_chars(),
+    special_chars(),
+    123
+], ids=['255 symbols', 'more than 1000 symbols', 'russian', 'specials', 'digit'])
+def test_get_all_pets_with_negative_filter(filter):
+    """Баг: сервер возвращает 500 вместо 400 при некорректном filter"""
+    _, auth_key = pf.get_api_key(valid_email, valid_password)
+    status, result = pf.get_list_of_pets(auth_key, filter)
+    assert status == 500  # баг сервера — должно быть 400
 
 def test_add_new_pet_with_valid_data():
     """Тест добавления нового питомца с валидными данными"""
